@@ -1,0 +1,16 @@
+Challenge:
+Write an algorithm to solve a random maze. Your program should accept two inputs (width/height) each being a positive integer.
+Launch the maze.server application and call the commands endpoint (localhost:3002) to move through the maze, on each command you will be given:
+
+-tile = an array of directions for your current location (up/down/left/right), where 0 = wall and 1 = floor (example [0,1,1,0] means there is a wall facing up and left, and floor facing right and down)
+-player = your position and a flag to notify you if you have solved the maze
+-start = starting co-ordinates on the maze
+-finish = the position you must reach to solve the maze
+
+Each call to the commands endpoint costs a turn, the aim is to complete the maze in the fewest turns. You may NOT call start more than once.
+
+There are additional endpoints to give you the full maze, these are for testing and are forbidden for your final programme.
+
+See README.md on server for more information on how to launch it and what the endpoints do.
+
+All submitted programmes will be tested on 3 random mazes (of random square sizes), fewest total turns wins.

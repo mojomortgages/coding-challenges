@@ -1,0 +1,57 @@
+Challenge:
+Write an algorithm to find the shortest path between 20 points and back to the start.
+
+Every point must be visted once and only once, apart from the first point which must be returned to.
+
+Your algorithm must not run for more than 5 minutes.
+
+How to play:
+Run "node startGame".
+This fires up a server listening on port 3000.
+Make a get request to http://localhost:3000/start/{{YOUR_USERNAME}}
+Your response body will look something like:
+
+        { 
+            g: [ 160, 22 ],
+            e: [ 52, 253 ],
+            c: [ 2, 5445 ],
+            ...
+        }
+
+You'll find 20 randomly assorted points with x and y coordinates each with a label 'a' through to 'r'. 
+So in the above example point g sits at x 160 and y 22.
+
+Once you've planned your shortest path through all of these point you need to send in your response.
+
+This time a get request to http://localhost:3000/submit/{{YOUR_USERNAME}}
+You'll need to specify a body which will look like:
+
+        { 
+            submission:{
+                path:['o','c','f','b','p','e','n','t','l','s','r','g','q','j','d','k','i','a','m','h','o'] 
+            } 
+        }
+
+You can start at any point, but you must return to it.
+
+If everything has gone to plan, you'll get a reponse with some handy information in the body:
+
+        { 
+            timeAccrued: 27.53038001060486,
+            distanceAccrued: 26050.60727654688,
+            returnsToStart: true,
+            eachPointVisited: true,
+            noRepeats: true 
+        }
+
+Useful for debugging, optimising and validation.
+
+There are three maps to test on, make an edit to line 8 in startGame.js to change the map.
+
+On competition day we'll run all algorithms on a new map of 20 points.
+
+The winner is simply the shortest distance. If we have a draw the fastest time wins.
+
+I've included two dumb algorithms to demonstrate the server.
+
+Good luck!

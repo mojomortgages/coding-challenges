@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>Maze</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        #maze {
+            border-collapse: collapse;
+        }
+
+        #maze td {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+    <body>
+
+    <table id="maze">
+        <tbody></tbody>
+    </table>
+
+    <table id="key">
+        <tbody>
+            <tr><td>Start</td><td><div style="width:20px;height:20px;background-color:#FFC300"></div></td></tr>
+            <tr><td>Finish</td><td><div style="width:20px;height:20px;background-color:#31843F"></div></td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        const playerColours = {};
+        const randomColour = (() => {
+          "use strict";
+
+          const randomInt = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          };
+
+          return () => {
+            var h = randomInt(0, 360);
+            var s = randomInt(42, 98);
+            var l = randomInt(40, 90);
+            return `hsl(${h},${s}%,${l}%)`;
+          };
+        })();
+        drawMaze = (maze) => {
+            console.log(maze);
+            $('#maze > tbody').html('');
+            for (var i = 0; i < maze.tiles.length; i++) {
+                $('#maze > tbody').append("<tr>");
+                for (var j = 0; j < maze.tiles[i].length; j++) {
+                    var selector = `${j}-${i}`;
+                    $('#maze > tbody').append("<td id='"+selector+"'>&nbsp;</td>");
+                    if (maze.tiles[i][j][0] == 0) { $('#'+selector).css('border-top', '2px solid black'); }
+                    if (maze.tiles[i][j][1] == 0) { $('#'+selector).css('border-right', '2px solid black'); }
+                    if (maze.tiles[i][j][2] == 0) { $('#'+selector).css('border-bottom', '2px solid black'); }
+                    if (maze.tiles[i][j][3] == 0) { $('#'+selector).css('border-left', '2px solid black'); }
+                }
+                $('#maze > tbody').append("</tr>");
+            }
+
+            const startSelector = `${maze.start.x}-${maze.start.y}`;
+            $('#'+startSelector).css('background-color', '#FFC300');
+
+            const endSelector = `${maze.finish.x}-${maze.finish.y}`;
+            $('#'+endSelector).css('background-color', '#31843F');
+
+            $('#key > tbody').html('');
+            addKeyRow('Start', '#FFC300');
+            addKeyRow('Finish', '#31843F');
+
+            Object.keys(maze.players).forEach((key) => {
+                const player = maze.players[key];
+                const colour = playerColours[key] || randomColour();
+                playerColours[key] = colour;
+                const selector = `${player.x}-${player.y}`;
+                $('#'+selector).css('background-color', colour);
+                addKeyRow(key, colour, player.moves);
+            })
+        }
+
+        addKeyRow = (key, colour, moves) => {
+          $('#key > tbody').append(`<tr><td>${key}</td><td><div style="width:20px;height:20px;background-color:${colour}"></div></td><td>${moves ? `${moves} moves` :  ''}</td>`);
+        }
+
+        fetchMaze = () => {
+          const path = document.location.pathname.split('/');
+          const width = path[2], height = path[3];
+          const requestUrl = `/status/${width}/${height}`;
+          const options = {
+              method: 'GET',
+              cache: 'no-store',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          };
+
+          fetch(requestUrl, options)
+            .then((response) => response.json())
+            .then(drawMaze)
+            .then(fetchMaze)
+            .catch((error) => console.log(error));
+        }
+
+        fetchMaze();
+
+    </script>
+
+    </body>
+</html>
